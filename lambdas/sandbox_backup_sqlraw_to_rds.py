@@ -33,12 +33,15 @@ SELECT
     BackupType,
     BackupStartDate,
     BackupFinishDate,
-    CompressedSizeBytes,          -- FIXED HERE
+    CompressedSizeBytes,
     PhysicalDeviceName
 FROM [DBAdmin].[dbo].[ProdBackup_Raw]
 WHERE SourceServer = 'LAWLDBP1LAS1'
   AND DatabaseName = 'lawprod'
-  AND CAST(BackupStartDate AS DATE) = CAST(GETDATE() AS DATE)
+  AND BackupType IN ('D','I')     -- Full and Diff only
+  AND CAST(BackupStartDate AS DATE)
+      IN (CAST(GETDATE() AS DATE),
+          CAST(DATEADD(DAY, -1, GETDATE()) AS DATE))
 ORDER BY BackupStartDate DESC;
 """
 
